@@ -19,25 +19,26 @@ export async function readNfcData(callback) {
   const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }));
 
   parser.on('data', async (line) => {
-    try {
-      const nfcId = line.trim();
-      console.log('NfcId received:', nfcId);
+    const nfcId = line.trim();  // <<< define it OUTSIDE the try-catch
+    console.log('NfcId received:', nfcId);
 
+    try {
       let response = null;
 
       if (nfcId === '249.14.59.0') {
         console.log('Bamlakes id');
-        response = await axiosInstance.get('http://localhost:3000/api/products/680ce82571e97172b51d1afe');
+        response = await axiosInstance.get('http://localhost:3000/api/products/680d077673d2dcc9ffab62ba');
       } else if (nfcId === '153.190.187.2') {
         console.log('Jorge id');
-        response = await axiosInstance.get('http://localhost:3000/api/products/680cf62443c18359564a7221');
+        response = await axiosInstance.get('http://localhost:3000/api/products/680d07bb73d2dcc9ffab62bc');
       } else {
         console.log('Unknown id');
-        response = { data: { message: 'Unknown NFC ID' } };
+        response = { data: { message: 'Unknown NFC ID' } }; // handle unknown ids properly
       }
 
       // Pass the NFC ID and response data to the callback
       callback(nfcId, response.data);
+
     } catch (err) {
       if (err.response) {
         console.error('HTTP Error:', err.response.status, err.response.data);
@@ -46,6 +47,7 @@ export async function readNfcData(callback) {
       } else {
         console.error('Error:', err.message);
       }
+      // Even in case of error, pass the nfcId safely
       callback(nfcId, { message: 'Error fetching data' });
     }
   });

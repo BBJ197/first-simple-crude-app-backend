@@ -16,8 +16,11 @@
   <main class="container">
     <section class="nfc-info">
       <p>Current NFC ID: <span id="nfcId">Waiting...</span></p>
-      <p>Product Name: <span id="productName">Unknown</span></p>
-      <img id="productImage" src="" alt="Product Image" style="display:none;">
+      <p>Student Name: <span id="StudentName">Unknown</span></p>
+      <p>Student ID: <span id="StudentId">Unknown</span></p>
+      <p>Student Department: <span id="StudentDepartment">Unknown</span></p>
+      <p>Year: <span id="Year">Unknown</span></p>
+      <img id="StudentImage" src="" alt="Student Image" style="display:none;">
     </section>
   </main>
   <footer>
@@ -35,22 +38,34 @@
         document.getElementById('nfcId').textContent = nfcId;
 
         // Update product name and image
-        const productName = document.getElementById('productName');
-        const productImage = document.getElementById('productImage');
+        const StudentName = document.getElementById('StudentName');
+        const StudentId = document.getElementById('StudentId');
+        const StudentDepartment = document.getElementById('StudentDepartment');
+        const Year = document.getElementById('Year');
+        const StudentImage = document.getElementById('StudentImage');
 
-        if (data && data.name && data.Image) {
-          productName.textContent = data.name;
-          productImage.src = `data:image/jpeg;base64,${data.Image}`;
-          productImage.style.display = 'block';
+        if (data && data.Sname && data.Image) {
+          StudentName.textContent = data.Sname;
+          StudentId.textContent = data.Sid;
+          StudentDepartment.textContent = data.Sdepartment;
+          Year.textContent = data.Syear ;
+          StudentImage.src = `data:image/jpeg;base64,${data.Image}`;
+          StudentImage.style.display = 'block';
         } else {
-          productName.textContent = data.message || 'Unknown';
-          productImage.style.display = 'none';
+          StudentName.textContent = data.message || 'Unknown';
+          StudentId.textContent = data.message || 'Unknown';
+          StudentDepartment.textContent = data.message || 'Unknown';
+          Year.textContent = data.message || 'Unknown';
+          StudentImage.style.display = 'none';
         }
       } catch (error) {
         console.error('Error fetching NFC data:', error);
         document.getElementById('nfcId').textContent = 'Error abe';
-        document.getElementById('productName').textContent = 'Error';
-        document.getElementById('productImage').style.display = 'none';
+        document.getElementById('StudentName').textContent = 'Error';
+        document.getElementById('StudentId').textContent = 'Error';
+        document.getElementById('StudentDepartment').textContent = 'Error';
+        document.getElementById('Year').textContent = 'Error';
+        document.getElementById('StudentImage').style.display = 'none';
       }
     }
 
