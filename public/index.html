@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFC Tag Image Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    img {
+      max-width: 300px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>NFC Tag Product Image</h1>
+  <p>Current NFC ID: <span id="nfcId">Waiting...</span></p>
+  <p>Product Name: <span id="productName">Unknown</span></p>
+  <img id="productImage" src="" alt="Product Image" style="display:none;">
+  <script>
+    async function fetchNfcData() {
+      try {
+        const response = await fetch('http://localhost:3001/api/nfc');
+        const { nfcId, data } = await response.json();
+
+        // Update NFC ID
+        document.getElementById('nfcId').textContent = nfcId;
+
+        // Update product name and image
+        const productName = document.getElementById('productName');
+        const productImage = document.getElementById('productImage');
+
+        if (data && data.name && data.Image) {
+          productName.textContent = data.name;
+          productImage.src = `data:image/jpeg;base64,${data.Image}`;
+          productImage.style.display = 'block';
+        } else {
+          productName.textContent = data.message || 'Unknown';
+          productImage.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error fetching NFC data:', error);
+        document.getElementById('nfcId').textContent = 'Error';
+        document.getElementById('productName').textContent = 'Error';
+        document.getElementById('productImage').style.display = 'none';
+      }
+    }
+
+    // Fetch data every 2 seconds
+    setInterval(fetchNfcData, 2000);
+
+    // Fetch immediately on page load
+    fetchNfcData();
+  </script>
+</body>
+</html>
