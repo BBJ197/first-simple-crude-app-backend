@@ -27,10 +27,10 @@ export async function readNfcData(callback) {
 
       if (nfcId === '249.14.59.0') {
         console.log('Bamlakes id');
-        response = await axiosInstance.get('http://localhost:3000/api/products/6807e4fad92cbf1ff7e12ce7');
-      } else if (nfcId === '8.148.121.79') {
+        response = await axiosInstance.get('http://localhost:3000/api/products/680ce82571e97172b51d1afe');
+      } else if (nfcId === '153.190.187.2') {
         console.log('Jorge id');
-        response = await axiosInstance.get('http://localhost:3000/api/products/6807c9e8f8954ae7712e38af');
+        response = await axiosInstance.get('http://localhost:3000/api/products/680cf62443c18359564a7221');
       } else {
         console.log('Unknown id');
         response = { data: { message: 'Unknown NFC ID' } };

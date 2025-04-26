@@ -17,8 +17,7 @@ app.get('/', (req, res) => {
     res.send('BBJ');
 });
 
-
-mongoose.connect('mongodb+srv://beamlakbekele197:Beamlak%401998@cluster0.qsihwuu.mongodb.net/Abebe?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect('mongodb+srv://beamlakbekele197:Beamlak%401998@cluster0.qsihwuu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
     .then(() => {
         console.log('Connected to MongoDB');
         app.listen(3000, () => {
