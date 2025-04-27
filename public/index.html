@@ -7,14 +7,19 @@
   <link rel="stylesheet" href="idchecker.css">
 </head>
 <body>
+
+
+
+
   <header>
     <div class="container">
-      <h1>Addis Ababa Univercity</h1>
+      <h1>Addis Ababa University</h1>
       <h2>Id checker</h2>
     </div>
   </header>
   <main class="container">
     <section class="nfc-info">
+      <p><span id="statusMessage">Waiting...</span></p>
       <p>Current NFC ID: <span id="nfcId">Waiting...</span></p>
       <p>Student Name: <span id="StudentName">Unknown</span></p>
       <p>Student ID: <span id="StudentId">Unknown</span></p>
@@ -30,28 +35,48 @@
   </footer>
   <script>
     async function fetchNfcData() {
+      // ment.getElementById('loadingOverlay');
+      // loadingOverlay.classList.remove('hidden'); // Show loading screen
       try {
         const response = await fetch('http://localhost:3001/api/nfc');
         const { nfcId, data } = await response.json();
 
-        // Update NFC ID
         document.getElementById('nfcId').textContent = nfcId;
 
-        // Update product name and image
+        const statusMessage = document.getElementById('statusMessage');
         const StudentName = document.getElementById('StudentName');
         const StudentId = document.getElementById('StudentId');
         const StudentDepartment = document.getElementById('StudentDepartment');
         const Year = document.getElementById('Year');
         const StudentImage = document.getElementById('StudentImage');
 
-        if (data && data.Sname && data.Image) {
-          StudentName.textContent = data.Sname;
+        if (data && data.Sname && data.Image&& data.message==="Success") {
+          statusMessage.textContent = 'NFC data fetched successfully';
+          statusMessage.style.color = 'green';
+          statusMessage.style.fontSize = '20px';
+          StudentName.textContent = data.message;
           StudentId.textContent = data.Sid;
           StudentDepartment.textContent = data.Sdepartment;
           Year.textContent = data.Syear ;
           StudentImage.src = `data:image/jpeg;base64,${data.Image}`;
           StudentImage.style.display = 'block';
-        } else {
+        } 
+        else if (data.message==="Duplicate") {
+          statusMessage.textContent = 'Duplicate entry!!!!!!!!!!';
+            statusMessage.style.color = 'red';
+            statusMessage.style.fontSize = '50px';
+         StudentName.textContent = data.Sname;
+          StudentId.textContent = data.Sid;
+          StudentDepartment.textContent = data.Sdepartment;
+          Year.textContent = data.Syear ;
+          StudentImage.src = `data:image/jpeg;base64,${data.Image}`;
+          StudentImage.style.display = 'block';
+          
+        } 
+        else {
+          statusMessage.textContent = 'NFC data not found!!!';
+          statusMessage.style.fontSize = '50px';
+            statusMessage.style.color = 'red';
           StudentName.textContent = data.message || 'Unknown';
           StudentId.textContent = data.message || 'Unknown';
           StudentDepartment.textContent = data.message || 'Unknown';
@@ -67,12 +92,11 @@
         document.getElementById('Year').textContent = 'Error';
         document.getElementById('StudentImage').style.display = 'none';
       }
+   
     }
 
-    // Fetch data every 2 seconds
     setInterval(fetchNfcData, 2000);
 
-    // Fetch immediately on page load
     fetchNfcData();
   </script>
 </body>

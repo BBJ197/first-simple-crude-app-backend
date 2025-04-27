@@ -2,24 +2,25 @@ import { SerialPort, ReadlineParser } from 'serialport';
 import axios from 'axios';
 import https from 'https';
 
-// Create an axios instance that ignores SSL errors (for local development)
+var n=0;
+var j=0;
 const axiosInstance = axios.create({
   httpsAgent: new https.Agent({
-    rejectUnauthorized: false // Ignore self-signed certificate errors
+    rejectUnauthorized: false 
   })
 });
 
 export async function readNfcData(callback) {
-  // Configure the serial port
+ 
   const port = new SerialPort({
-    path: 'COM6', // Replace with your Arduino's port
+    path: 'COM6', 
     baudRate: 9600
   });
 
   const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }));
 
   parser.on('data', async (line) => {
-    const nfcId = line.trim();  // <<< define it OUTSIDE the try-catch
+    const nfcId = line.trim(); 
     console.log('NfcId received:', nfcId);
 
     try {
@@ -28,15 +29,30 @@ export async function readNfcData(callback) {
       if (nfcId === '249.14.59.0') {
         console.log('Bamlakes id');
         response = await axiosInstance.get('http://localhost:3000/api/products/680d077673d2dcc9ffab62ba');
+        response.data.message= "Success";
+        n+=1;
+        if (n > 1) {
+          console.log('Bamlakes id called more than once');
+        //  response = await axiosInstance.get('http://localhost:3000/api/products/680d077673d2dcc9ffab62ba');
+          response.data.message= "Duplicate"; 
+        }
       } else if (nfcId === '153.190.187.2') {
         console.log('Jorge id');
         response = await axiosInstance.get('http://localhost:3000/api/products/680d07bb73d2dcc9ffab62bc');
+        response.data.message= "Success";
+        j+=1;
+        if (j > 1) {
+          console.log('Bamlakes id called more than once');
+        //  response = await axiosInstance.get('http://localhost:3000/api/products/680d077673d2dcc9ffab62ba');
+          response.data.message= "Duplicate"; 
+        }
+        
       } else {
         console.log('Unknown id');
-        response = { data: { message: 'Unknown NFC ID' } }; // handle unknown ids properly
+        response = { data: { message: 'Unknown NFC ID' } }; 
       }
 
-      // Pass the NFC ID and response data to the callback
+
       callback(nfcId, response.data);
 
     } catch (err) {
@@ -47,7 +63,7 @@ export async function readNfcData(callback) {
       } else {
         console.error('Error:', err.message);
       }
-      // Even in case of error, pass the nfcId safely
+      
       callback(nfcId, { message: 'Error fetching data' });
     }
   });
